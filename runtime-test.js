@@ -1,4 +1,4 @@
-import Blockchain from './blockchain'
+const Blockchain = require('./dist/blockchain').default
 // import Transaction from './transaction'
 // import Block from './block'
 
