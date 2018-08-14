@@ -52,19 +52,24 @@ class Blockchain {
     return this.chain.slice(-1)[0]
   }
 
-  static proofOfWork(lastProof: number, proofCandidate: number = 0): number {
-    if (Blockchain.validProof(lastProof, proofCandidate)) {
-      return proofCandidate
-    } else {
-      return Blockchain.proofOfWork(lastProof, proofCandidate)
-    }
+  static proofOfWork(lastProof: number, proofCandidate: number = 0): Promise<number> {
+    return new Promise((resolve, reject) => {
+      if (Blockchain.validProof(lastProof, proofCandidate)) {
+        return resolve(proofCandidate)
+      } else {
+        return process.nextTick(() => {
+          resolve(Blockchain.proofOfWork(lastProof, proofCandidate + 1))
+        })
+      }
+    })
   }
 
   static validProof(lastProof: number, proofCandidate: number) {
     const guess = `${lastProof}${proofCandidate}`
     const guessHash = Blockchain.getDigestHex(guess)
+    console.log(guessHash.slice(-3))
 
-    return guessHash.slice(-4, 4) === '0000'
+    return guessHash.slice(-3) === '000'
   }
 }
 
