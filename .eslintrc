@@ -1,0 +1,33 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "standard",
+    "plugin:react/recommended",
+    "plugin:flowtype/recommended",
+    "plugin:jest/recommended"
+  ],
+  "rules":{
+    "space-before-function-paren": ["error", {
+      "anonymous": "never",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
+    "no-return-assign": 0,
+    "camelcase": 0,
+    "comma-dangle": ["error", "always-multiline"],
+    "react/jsx-no-bind": 0,
+    "react/jsx-no-lambda": 0,
+    "generator-star-spacing": ["error", {"before": false, "after": false}]
+  },
+  "globals": {
+    "_": false
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "plugins": [
+    "flowtype",
+    "jest"
+  ]
+}
