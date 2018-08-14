@@ -28,12 +28,8 @@ class Blockchain {
   }
 
   // 新しいトランザクションをリストに加える
-  newTransaction(sender: string, recipient: string, amount: number): number {
-    this.currentTransactions.push({
-      sender,
-      recipient,
-      amount,
-    })
+  newTransaction(transaction: Transaction): number {
+    this.currentTransactions.push(transaction)
     return this.lastBlock['index'] + 1
   }
 
