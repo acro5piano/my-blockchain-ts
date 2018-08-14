@@ -1,0 +1,23 @@
+{
+  "extends": ["tslint-eslint-rules", "tslint-config-standard"],
+  "rules": {
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "comma-dangle": ["error", "always-multiline"],
+    "quotemark": [true, "single"],
+    "trailing-comma": [
+      true,
+      {
+        "singleline": "never",
+        "multiline": "always"
+      }
+    ],
+    "no-floating-promises": false
+  }
+}

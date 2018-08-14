@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    //"noImplicitAny": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "lib": ["es2015"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "baseUrl": "./",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "paths": {
+      "*": [ "./src/*" ]
+    }
+  },
+  "include": [
+    "./src/**/*",
+    "./src/**/__tests__/*.test.ts"
+  ]
+}
