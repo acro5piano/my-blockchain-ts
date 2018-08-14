@@ -1,8 +1,22 @@
-const micro = require('micro')
+import Blockchain from './blockchain'
+import Transaction from './transaction'
+import { get, post, router } from 'microrouter'
 
-const server = micro(async (req: any, res: any) => {
-  return 'Hello world'
-})
+const blockchain = new Blockchain()
 
-console.log('micro is running at localhost:3000')
-server.listen(3000)
+console.log(blockchain)
+
+const newTransaction = () => {
+  const transaction: Transaction = {
+    sender: 'Alice',
+    recipient: 'Bob',
+    amount: 1000,
+  }
+  blockchain.newTransaction(transaction)
+}
+
+export default router(
+  get('/', () => 'Hello'),
+  post('/transactions/new', newTransaction),
+  post('/blocks/new', () => 'hoge'),
+)
