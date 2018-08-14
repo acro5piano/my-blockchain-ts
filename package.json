@@ -27,6 +27,8 @@
     "typescript": "^3.0.1"
   },
   "dependencies": {
+    "micro": "^9.3.3",
+    "micro-dev": "^3.0.0",
     "node-forge": "^0.7.5"
   }
 }

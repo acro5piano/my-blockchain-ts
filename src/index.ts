@@ -1,20 +1,8 @@
-import Blockchain from './blockchain'
-// import Transaction from './transaction'
-// import Block from './block'
+const micro = require('micro')
 
-const a = new Blockchain()
+const server = micro(async (req: any, res: any) => {
+  return 'Hello world'
+})
 
-console.log('initial block chain')
-console.log(a)
-
-// const transaction: Transaction = {
-//   sender: 'hoge',
-//   recipient: 'fuga',
-//   amount: 123,
-// }
-
-a.newTransaction('hoge', 'fuga', 123)
-a.newBlock(12345)
-
-console.log('after added block chain')
-console.log(a)
+console.log('micro is running at localhost:3000')
+server.listen(3000)
