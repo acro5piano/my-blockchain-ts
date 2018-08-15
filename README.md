@@ -1,6 +1,6 @@
-# my-blockchain-js
+# my-blockchain-ts
 
-![](https://github.com/acro5piano/import-js-from-history/blob/master/screenshort.png)
+![](https://github.com/acro5piano/my-blockchain-ts/blob/master/screenshort.png)
 
 My simple blockchain implementation with TypeScript, ported from https://github.com/dvf/blockchain unofficially.
 
