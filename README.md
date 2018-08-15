@@ -2,6 +2,8 @@
 
 ![](https://github.com/acro5piano/my-blockchain-ts/blob/master/screenshot.png)
 
+Live demo: https://my-blockchain-js-lgzccopgvl.now.sh
+
 My simple blockchain implementation with TypeScript, ported from https://github.com/dvf/blockchain unofficially.
 
 Stacks:
