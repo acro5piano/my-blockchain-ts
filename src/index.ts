@@ -10,12 +10,7 @@ const nodeIdentifire = uuid().replace(/-/g, '')
 const blockchain = new Blockchain()
 
 const newTransaction = async (req: IncomingMessage) => {
-  const { sender, recipient, amount } = await json<Transaction>(req)
-  const transaction = {
-    sender,
-    recipient,
-    amount,
-  }
+  const transaction = await json<Transaction>(req)
   return blockchain.newTransaction(transaction)
 }
 
