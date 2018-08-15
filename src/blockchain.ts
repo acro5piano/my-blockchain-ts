@@ -3,6 +3,7 @@ import Transaction from './transaction'
 import { getDigestHex } from './proof-of-work'
 
 class Blockchain {
+  nodes: Set<string> = new Set()
   chain: Block[] = []
   currentTransactions: Transaction[] = []
 
@@ -47,6 +48,10 @@ class Blockchain {
   // チェーンの最後のブロックをリターンする
   get lastBlock(): Block {
     return this.chain.slice(-1)[0]
+  }
+
+  addNode(node: string) {
+    this.nodes.add(node)
   }
 }
 
