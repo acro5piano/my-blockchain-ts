@@ -3,6 +3,7 @@ import Transaction from './transaction'
 import { get, post, router } from 'microrouter'
 import { json } from 'micro'
 import { IncomingMessage } from 'http'
+import { proofOfWork } from './proof-of-work'
 import uuid from 'uuid'
 
 const nodeIdentifire = uuid().replace(/-/g, '')
@@ -18,19 +19,22 @@ const newTransaction = async (req: IncomingMessage) => {
   return blockchain.newTransaction(transaction)
 }
 
-const newBlock = async () => {
+/*
+ * Mine blockchain and commit current transactions.
+ *
+ * The node get coin for calculation of new proof.
+ * Sender is '0' for new coin.
+ */
+const mine = async () => {
   const lastProof = blockchain.lastBlock.proof
-  const proof = await Blockchain.proofOfWork(lastProof)
+  const proof = await proofOfWork(lastProof)
 
-  // プルーフを見つけたことに対する報酬を得る
-  // 送信者は、採掘者が新しいコインを採掘したことを表すために"0"とする
   blockchain.newTransaction({
     sender: '0',
     recipient: nodeIdentifire,
     amount: 1,
   })
 
-  // チェーンに新しいブロックを加えることで、新しいブロックを採掘する
   return blockchain.newBlock(proof)
 }
 
@@ -38,7 +42,7 @@ export default router(
   get('/', () => 'Hello'),
   get('/blocks', () => blockchain.chain),
   post('/transactions/new', newTransaction),
-  post('/blocks/new', newBlock),
+  post('/mine', mine),
   () => 'Not found',
 )
 

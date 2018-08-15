@@ -17,10 +17,13 @@ describe('Block', () => {
     }
     blockchain.newTransaction(transaction)
     expect(blockchain.currentTransactions).toHaveLength(1)
+    expect(blockchain.chain).toHaveLength(1)
+
     blockchain.newBlock(12345)
     expect(blockchain.chain).toHaveLength(2)
 
     const lastBlock = blockchain.lastBlock
+    expect(lastBlock.index).toEqual(2)
     expect(lastBlock.transactions).toEqual([transaction])
   })
 })

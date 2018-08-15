@@ -1,6 +1,6 @@
-import forge from 'node-forge'
 import Block from './block'
 import Transaction from './transaction'
+import { getDigestHex } from './proof-of-work'
 
 class Blockchain {
   chain: Block[] = []
@@ -10,7 +10,9 @@ class Blockchain {
     this.newBlock(100, 1)
   }
 
-  // 新しいブロックを作り、チェーンに加える
+  /*
+   * Create new block from current transactions to Blockchain.
+   */
   newBlock(proof: number, previousHash?: string | number) {
     const block: Block = {
       index: this.chain.length + 1,
@@ -20,14 +22,15 @@ class Blockchain {
       previousHash: previousHash || Blockchain.hash(this.chain.slice(-1)[0]),
     }
 
-    // 現在のトランザクションリストをリセット
     this.currentTransactions = []
 
     this.chain.push(block)
     return block
   }
 
-  // 新しいトランザクションをリストに加える
+  /*
+   * Add a new transaction to current transactions.
+   */
   newTransaction(transaction: Transaction): number {
     this.currentTransactions.push(transaction)
     return this.lastBlock['index'] + 1
@@ -37,39 +40,13 @@ class Blockchain {
   // TODO:
   //     必ずディクショナリ（辞書型のオブジェクト）がソートされている必要がある。そうでないと、一貫性のないハッシュとなってしまう
   //     一旦しない
-  static hash(block: Block): string {
-    return Blockchain.getDigestHex(JSON.stringify(block))
-  }
-
-  static getDigestHex(normalString: string): string {
-    const md = forge.md.sha256.create()
-    md.update(normalString)
-    return md.digest().toHex()
+  private static hash(block: Block): string {
+    return getDigestHex(JSON.stringify(block))
   }
 
   // チェーンの最後のブロックをリターンする
   get lastBlock(): Block {
     return this.chain.slice(-1)[0]
-  }
-
-  static proofOfWork(lastProof: number, proofCandidate: number = 0): Promise<number> {
-    return new Promise((resolve, reject) => {
-      if (Blockchain.validProof(lastProof, proofCandidate)) {
-        return resolve(proofCandidate)
-      } else {
-        return process.nextTick(() => {
-          resolve(Blockchain.proofOfWork(lastProof, proofCandidate + 1))
-        })
-      }
-    })
-  }
-
-  static validProof(lastProof: number, proofCandidate: number) {
-    const guess = `${lastProof}${proofCandidate}`
-    const guessHash = Blockchain.getDigestHex(guess)
-    console.log(guessHash.slice(-3))
-
-    return guessHash.slice(-3) === '000'
   }
 }
 
