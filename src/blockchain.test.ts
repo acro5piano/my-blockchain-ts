@@ -1,6 +1,7 @@
 import Blockchain from './blockchain'
 import Block from './block'
 import Transaction from './transaction'
+import { proofOfWork } from './proof-of-work'
 
 const genTransaction = (): Transaction => ({
   sender: 'Alice',
@@ -30,13 +31,15 @@ describe('Block', () => {
     expect(lastBlock.transactions).toEqual([transaction])
   })
 
-  it('implements consensus algorithm', () => {
+  it('implements consensus algorithm', async () => {
     expect(blockchain.nodes.size).toBe(0)
     blockchain.addNode('http://localhost:5555')
     expect(blockchain.nodes.size).toBe(1)
     expect(blockchain.nodes.has('http://localhost:5555')).toBe(true)
 
     const transaction = genTransaction()
+
+    // invalid chain
     const invalidChain: Block[] = [
       {
         index: 1,
@@ -55,7 +58,10 @@ describe('Block', () => {
     ]
     expect(blockchain.verifyChain(invalidChain)).toBe(false)
 
+    // valid chain
     blockchain.newTransaction(transaction)
+    const validProof = await proofOfWork(blockchain.lastBlock.proof)
+    blockchain.newBlock(validProof)
     const validChain = blockchain.chain
     expect(blockchain.verifyChain(validChain)).toBe(true)
   })

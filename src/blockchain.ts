@@ -58,18 +58,16 @@ class Blockchain {
     let lastBlock = chain[0]
     let currentIndex = 1
 
+    // TODO: rewrite with chain.reduce(car, cur => ...
     while (currentIndex < chain.length) {
       const block = chain[currentIndex]
-      // print(f'{lastBlock}')
-      // print(f'{block}')
-      // print("\n--------------\n")
 
-      // ブロックのハッシュが正しいかを確認
+      // Verify block hash
       if (block.previousHash !== Blockchain.hash(lastBlock)) {
         return false
       }
 
-      // プルーフ・オブ・ワークが正しいかを確認
+      // Verify block proof of work
       if (!verifyProof(lastBlock.proof, block.proof)) {
         return false
       }
