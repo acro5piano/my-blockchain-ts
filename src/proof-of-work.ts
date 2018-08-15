@@ -27,7 +27,7 @@ export const proofOfWork = (lastProof: number, proofCandidate: number = 0): Prom
 /*
  * Verify a new proof.
  */
-const verifyProof = (lastProof: number, proofCandidate: number) => {
+export const verifyProof = (lastProof: number, proofCandidate: number) => {
   const guess = `${lastProof}${proofCandidate}`
   const guessHash = getDigestHex(guess)
 

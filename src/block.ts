@@ -5,5 +5,5 @@ export default interface Block {
   timestamp: number // yet float
   transactions: Transaction[]
   proof: number
-  previousHash: string | number
+  previousHash: string
 }

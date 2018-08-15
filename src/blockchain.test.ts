@@ -1,5 +1,12 @@
 import Blockchain from './blockchain'
+import Block from './block'
 import Transaction from './transaction'
+
+const genTransaction = (): Transaction => ({
+  sender: 'Alice',
+  recipient: 'Bob',
+  amount: 1000,
+})
 
 describe('Block', () => {
   let blockchain: Blockchain
@@ -10,11 +17,7 @@ describe('Block', () => {
     expect(blockchain.chain).toHaveLength(1)
     expect(blockchain.currentTransactions).toHaveLength(0)
 
-    const transaction: Transaction = {
-      sender: 'Alice',
-      recipient: 'Bob',
-      amount: 1000,
-    }
+    const transaction = genTransaction()
     blockchain.newTransaction(transaction)
     expect(blockchain.currentTransactions).toHaveLength(1)
     expect(blockchain.chain).toHaveLength(1)
@@ -32,5 +35,28 @@ describe('Block', () => {
     blockchain.addNode('http://localhost:5555')
     expect(blockchain.nodes.size).toBe(1)
     expect(blockchain.nodes.has('http://localhost:5555')).toBe(true)
+
+    const transaction = genTransaction()
+    const invalidChain: Block[] = [
+      {
+        index: 1,
+        timestamp: Date.now(),
+        transactions: [transaction],
+        proof: 12345,
+        previousHash: blockchain.lastBlock.previousHash,
+      },
+      {
+        index: 2,
+        timestamp: Date.now(),
+        transactions: [transaction],
+        proof: 12345,
+        previousHash: blockchain.lastBlock.previousHash,
+      },
+    ]
+    expect(blockchain.verifyChain(invalidChain)).toBe(false)
+
+    blockchain.newTransaction(transaction)
+    const validChain = blockchain.chain
+    expect(blockchain.verifyChain(validChain)).toBe(true)
   })
 })

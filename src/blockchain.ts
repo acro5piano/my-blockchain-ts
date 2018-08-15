@@ -1,6 +1,6 @@
 import Block from './block'
 import Transaction from './transaction'
-import { getDigestHex } from './proof-of-work'
+import { getDigestHex, verifyProof } from './proof-of-work'
 
 class Blockchain {
   nodes: Set<string> = new Set()
@@ -8,13 +8,13 @@ class Blockchain {
   currentTransactions: Transaction[] = []
 
   constructor() {
-    this.newBlock(100, 1)
+    this.newBlock(100, 'INITIAL_HASH')
   }
 
   /*
    * Create new block from current transactions to Blockchain.
    */
-  newBlock(proof: number, previousHash?: string | number) {
+  newBlock(proof: number, previousHash?: string) {
     const block: Block = {
       index: this.chain.length + 1,
       timestamp: Date.now(),
@@ -52,6 +52,32 @@ class Blockchain {
 
   addNode(node: string) {
     this.nodes.add(node)
+  }
+
+  verifyChain(chain: Block[]): boolean {
+    let lastBlock = chain[0]
+    let currentIndex = 1
+
+    while (currentIndex < chain.length) {
+      const block = chain[currentIndex]
+      // print(f'{lastBlock}')
+      // print(f'{block}')
+      // print("\n--------------\n")
+
+      // ブロックのハッシュが正しいかを確認
+      if (block.previousHash !== Blockchain.hash(lastBlock)) {
+        return false
+      }
+
+      // プルーフ・オブ・ワークが正しいかを確認
+      if (!verifyProof(lastBlock.proof, block.proof)) {
+        return false
+      }
+
+      lastBlock = block
+      currentIndex += 1
+    }
+    return true
   }
 }
 
