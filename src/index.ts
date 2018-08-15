@@ -10,7 +10,7 @@ const nodeIdentifire = uuid().replace(/-/g, '')
 const blockchain = new Blockchain()
 
 const newTransaction = async (req: IncomingMessage) => {
-  const { sender, recipient, amount } = (await json(req)) as Transaction
+  const { sender, recipient, amount } = await json<Transaction>(req)
   const transaction = {
     sender,
     recipient,
@@ -35,14 +35,33 @@ const mine = async () => {
     amount: 1,
   })
 
-  return blockchain.newBlock(proof)
+  const newBlock = blockchain.newBlock(proof)
+  await consensus()
+  return newBlock
+}
+
+const addNode = async (req: IncomingMessage) => {
+  const { node } = await json<{ node: string }>(req)
+  if (!node) {
+    return 'invalid node'
+  }
+  blockchain.registerNode(node)
+  return blockchain.nodesAsArray
+}
+
+const consensus = async () => {
+  const replaced = await blockchain.resolveConflicts()
+  return { replaced }
 }
 
 export default router(
   get('/', () => 'Hello'),
   get('/blocks', () => blockchain.chain),
+  get('/nodes', () => blockchain.nodesAsArray),
   post('/transactions/new', newTransaction),
   post('/mine', mine),
+  post('/nodes/new', addNode),
+  post('/consensus', consensus),
   () => 'Not found',
 )
 

@@ -33,7 +33,7 @@ describe('Block', () => {
 
   it('can verify chain', async () => {
     expect(blockchain.nodes.size).toBe(0)
-    blockchain.addNode('http://localhost:5555')
+    blockchain.registerNode('http://localhost:5555')
     expect(blockchain.nodes.size).toBe(1)
     expect(blockchain.nodes.has('http://localhost:5555')).toBe(true)
 
@@ -84,7 +84,7 @@ describe('Block', () => {
       })
 
     blockchain = new Blockchain(mockFetch)
-    blockchain.addNode('http://hoge.com/')
+    blockchain.registerNode('http://hoge.com/')
     const resolveResult = await blockchain.resolveConflicts()
     expect(resolveResult).toBe(true)
     expect(blockchain.chain).toHaveLength(2)
@@ -108,7 +108,7 @@ describe('Block', () => {
       })
 
     blockchain = new Blockchain(mockFetch)
-    blockchain.addNode('http://hoge.com/')
+    blockchain.registerNode('http://hoge.com/')
     const resolveResult = await blockchain.resolveConflicts()
     expect(resolveResult).toBe(false)
     expect(blockchain.chain).toHaveLength(1)

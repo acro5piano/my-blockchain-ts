@@ -24,6 +24,7 @@ class Blockchain {
 
   /*
    * Create new block from current transactions to Blockchain.
+   * TODO: refactor with two methods: `new`, `add`
    */
   newBlock(proof: number, previousHash?: string) {
     const block: Block = {
@@ -61,7 +62,11 @@ class Blockchain {
     return this.chain.slice(-1)[0]
   }
 
-  addNode(node: string) {
+  get nodesAsArray() {
+    return Array.from(this.nodes)
+  }
+
+  registerNode(node: string) {
     this.nodes.add(node)
   }
 
@@ -92,7 +97,7 @@ class Blockchain {
   async resolveConflicts(): Promise<boolean> {
     // 他のすべてのノードのチェーンを確認
     const chains: Block[][] = await Promise.all(
-      Array.from(this.nodes).map(node => {
+      this.nodesAsArray.map(node => {
         return this.fetch(`${node}/blocks`).then((res: any) => res.json())
       }),
     )
