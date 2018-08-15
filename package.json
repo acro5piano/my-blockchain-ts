@@ -6,7 +6,7 @@
   "author": "gosho-kazuya <ketsume0211@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "npm run build && node dist/index.js",
+    "start": "npm run build && micro",
     "dev": "tsc && npm-run-all --parallel watch:ts watch:js",
     "watch:ts": "tsc -w",
     "watch:js": "micro-dev",
