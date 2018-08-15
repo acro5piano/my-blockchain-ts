@@ -35,6 +35,12 @@
     "@types/micro" "*"
     "@types/node" "*"
 
+"@types/node-fetch@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.1.2.tgz#8c5da14d70321e4c4ecd5db668e3f93cf6c7399f"
+  dependencies:
+    "@types/node" "*"
+
 "@types/node-forge@^0.7.4":
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/@types/node-forge/-/node-forge-0.7.4.tgz#ad18e877541dd4c4a33430bb1248032a6d14db58"
@@ -2612,6 +2618,10 @@ needle@^2.2.1:
 nice-try@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
+
+node-fetch@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.2.0.tgz#4ee79bde909262f9775f731e3656d0db55ced5b5"
 
 node-forge@^0.7.5:
   version "0.7.5"

@@ -1,4 +1,4 @@
-import Blockchain from './blockchain'
+import Blockchain, { Fetch } from './blockchain'
 import Block from './block'
 import Transaction from './transaction'
 import { proofOfWork } from './proof-of-work'
@@ -31,7 +31,7 @@ describe('Block', () => {
     expect(lastBlock.transactions).toEqual([transaction])
   })
 
-  it('implements consensus algorithm', async () => {
+  it('can verify chain', async () => {
     expect(blockchain.nodes.size).toBe(0)
     blockchain.addNode('http://localhost:5555')
     expect(blockchain.nodes.size).toBe(1)
@@ -56,13 +56,61 @@ describe('Block', () => {
         previousHash: blockchain.lastBlock.previousHash,
       },
     ]
-    expect(blockchain.verifyChain(invalidChain)).toBe(false)
+    expect(Blockchain.verifyChain(invalidChain)).toBe(false)
 
     // valid chain
     blockchain.newTransaction(transaction)
     const validProof = await proofOfWork(blockchain.lastBlock.proof)
     blockchain.newBlock(validProof)
     const validChain = blockchain.chain
-    expect(blockchain.verifyChain(validChain)).toBe(true)
+    expect(Blockchain.verifyChain(validChain)).toBe(true)
+  })
+
+  it('implements consensus algorithm when replace', async () => {
+    const transaction = genTransaction()
+    const nextProof = await proofOfWork(blockchain.lastBlock.proof)
+    const mockFetch: Fetch<Block[]> = (node: string) =>
+      Promise.resolve({
+        json: () => [
+          blockchain.lastBlock,
+          {
+            index: 2,
+            timestamp: Date.now(),
+            transactions: [transaction],
+            proof: nextProof,
+            previousHash: Blockchain.hash(blockchain.lastBlock),
+          },
+        ],
+      })
+
+    blockchain = new Blockchain(mockFetch)
+    blockchain.addNode('http://hoge.com/')
+    const resolveResult = await blockchain.resolveConflicts()
+    expect(resolveResult).toBe(true)
+    expect(blockchain.chain).toHaveLength(2)
+  })
+
+  it('implements consensus algorithm when not replace', async () => {
+    const transaction = genTransaction()
+    const nextProof = await proofOfWork(blockchain.lastBlock.proof)
+    const mockFetch: Fetch<Block[]> = (node: string) =>
+      Promise.resolve({
+        json: () => [
+          blockchain.lastBlock,
+          {
+            index: 2,
+            timestamp: Date.now(),
+            transactions: [transaction],
+            proof: nextProof,
+            previousHash: 'INVALID_HASH',
+          },
+        ],
+      })
+
+    blockchain = new Blockchain(mockFetch)
+    blockchain.addNode('http://hoge.com/')
+    const resolveResult = await blockchain.resolveConflicts()
+    expect(resolveResult).toBe(false)
+    expect(blockchain.chain).toHaveLength(1)
   })
 })

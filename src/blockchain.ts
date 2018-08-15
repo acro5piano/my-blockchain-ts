@@ -1,13 +1,24 @@
 import Block from './block'
 import Transaction from './transaction'
 import { getDigestHex, verifyProof } from './proof-of-work'
+import defaultFetch from 'node-fetch'
+
+const depFetch = defaultFetch
+
+interface IJsonable<T> {
+  json: () => T
+}
+
+export type Fetch<T = {}> = (url: string) => Promise<IJsonable<T>>
 
 class Blockchain {
   nodes: Set<string> = new Set()
   chain: Block[] = []
   currentTransactions: Transaction[] = []
+  fetch: Fetch
 
-  constructor() {
+  constructor(fetch: Fetch = depFetch) {
+    this.fetch = fetch
     this.newBlock(100, 'INITIAL_HASH')
   }
 
@@ -41,7 +52,7 @@ class Blockchain {
   // TODO:
   //     必ずディクショナリ（辞書型のオブジェクト）がソートされている必要がある。そうでないと、一貫性のないハッシュとなってしまう
   //     一旦しない
-  private static hash(block: Block): string {
+  static hash(block: Block): string {
     return getDigestHex(JSON.stringify(block))
   }
 
@@ -54,7 +65,7 @@ class Blockchain {
     this.nodes.add(node)
   }
 
-  verifyChain(chain: Block[]): boolean {
+  static verifyChain(chain: Block[]): boolean {
     let lastBlock = chain[0]
     let currentIndex = 1
 
@@ -76,6 +87,35 @@ class Blockchain {
       currentIndex += 1
     }
     return true
+  }
+
+  async resolveConflicts(): Promise<boolean> {
+    // 他のすべてのノードのチェーンを確認
+    const chains: Block[][] = await Promise.all(
+      Array.from(this.nodes).map(node => {
+        return this.fetch(`${node}/blocks`).then((res: any) => res.json())
+      }),
+    )
+
+    // get chain to be replaced with
+    const validChains = chains.filter(chain => {
+      return Blockchain.verifyChain(chain) && this.chain.length < chain.length
+    })
+    if (validChains.length === 0) {
+      return false
+    }
+
+    const longerChain = validChains.reduce((car, cur) => {
+      return cur.length > car.length ? cur : car
+    })
+
+    // もし自らのチェーンより長く、かつ有効なチェーンを見つけた場合それで置き換える
+    if (longerChain) {
+      this.chain = longerChain
+      return true
+    }
+
+    return false
   }
 }
 
