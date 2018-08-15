@@ -3,8 +3,6 @@ import Transaction from './transaction'
 import { getDigestHex, verifyProof } from './proof-of-work'
 import defaultFetch from 'node-fetch'
 
-const depFetch = defaultFetch
-
 interface IJsonable<T> {
   json: () => T
 }
@@ -17,7 +15,10 @@ class Blockchain {
   currentTransactions: Transaction[] = []
   fetch: Fetch
 
-  constructor(fetch: Fetch = depFetch) {
+  /*
+   * To enable `fetch` dependency injection, we pass `defaultFetch`.
+   */
+  constructor(fetch: Fetch = defaultFetch) {
     this.fetch = fetch
     this.newBlock(100, 'INITIAL_HASH')
   }
