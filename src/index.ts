@@ -35,9 +35,7 @@ const mine = async () => {
     amount: 1,
   })
 
-  const newBlock = blockchain.newBlock(proof)
-  await consensus()
-  return newBlock
+  return blockchain.newBlock(proof)
 }
 
 const addNode = async (req: IncomingMessage) => {
