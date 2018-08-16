@@ -6,7 +6,8 @@
   "author": "gosho-kazuya <ketsume0211@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "tsc && micro",
+    "start": "micro",
+    "build": "tsc",
     "dev": "tsc && npm-run-all --parallel watch:ts watch:js",
     "watch:ts": "tsc -w",
     "watch:js": "micro-dev",
